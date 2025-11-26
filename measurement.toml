@@ -1,0 +1,13 @@
+[general]
+config_file = "/mnt/SamsungSSD/Nextcloud/Uni_Informatik/Master_Project/rusty_fluid_solver/scene_config.toml"
+state_file = "/mnt/SamsungSSD/Nextcloud/Uni_Informatik/Master_Project/rusty_fluid_solver/state.ron"
+measurement_destination_file_path = "/mnt/SamsungSSD/Nextcloud/Uni_Informatik/Master_Project/rusty_measure/m1"
+start_time = 1.0
+finish_time = 0.2
+
+[operation]
+type = "Zip" # Zip, Cartesian
+
+[parameters]
+time_inc = [0.001] #, 0.005, 0.01, 0.005, 0.005,]
+solver_iterations = [5] #, 5, 5, 10, 15]

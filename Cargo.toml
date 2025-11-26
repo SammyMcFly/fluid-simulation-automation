@@ -1,0 +1,21 @@
+[package]
+name = "rusty_measure"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# command line parser
+clap = {version = "4.5.51", features = ["derive"] }
+
+# loading .toml files
+toml = "0.9"
+
+serde = { version = "1.0", features = ["derive"] }
+
+itertools = "0.14.0"
+
+tracing = "0.1.41"
+tracing-subscriber = "0.3.19"
+tracing-appender = "0.2.3"
+
+indicatif = "0.17.9"
