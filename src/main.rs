@@ -11,7 +11,7 @@ use std::io::{BufRead, BufReader};
 use std::path::Path;
 use tracing::level_filters::LevelFilter;
 use tracing_subscriber::FmtSubscriber;
-use indicatif::{MultiProgress, ProgressBar, HumanDuration};
+use indicatif::{MultiProgress, ProgressBar};
 use indicatif::style::ProgressStyle;
 
 
@@ -61,7 +61,7 @@ fn add_suffix(original: &str, suffix: &str) -> std::path::PathBuf {
     let ext  = path.extension().unwrap_or_default().to_string_lossy();
 
     // Build new filename: name.suffix.ext
-    let new_filename = format!("{}.{}.{}", stem, suffix, ext);
+    let new_filename = format!("{}_{}.{}", stem, suffix, ext);
 
     // Return new path in the same directory
     path.with_file_name(new_filename)
@@ -135,6 +135,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
     // Handling file paths
     let extension = "temp".to_string();
     let temp_file_path = add_suffix(&measurement_config.general.config_file, &extension);
+    if temp_file_path.as_path().exists() {
+        panic!("Parameter variation config file already exists!");
+    }
 
     // Read file into a string
     let content_string = std::fs::read_to_string(measurement_config.general.config_file)?;
@@ -221,8 +224,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
             .arg(measurement_config.general.state_file.clone())
             .arg("-m")
             .arg(add_file_name_to_folder(&measurement_config.general.measurement_destination_file_path, &file_name))
-            // .arg("--start_time")
-            // .arg(measurement_config.general.start_time.to_string())
+            .arg("--start_time")
+            .arg(measurement_config.general.start_time.to_string())
             .arg("-f")
             .arg(measurement_config.general.finish_time.to_string())
             // .arg("-r")
@@ -251,6 +254,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
         bar.inc(1);
     }
     bar.finish_with_message("All measurements done!");
+
+    if temp_file_path.as_path().exists() && temp_file_path.as_path().is_file() {
+        std::fs::remove_file(temp_file_path)?;
+    }
 
     Ok(())
 }
