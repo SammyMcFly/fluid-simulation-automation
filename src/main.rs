@@ -78,8 +78,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
         Err(e) => panic!("Error: {}", e),
     }
 
-
-    println!("Close rusty fluid solver to proceed with next measurement, when a measurement is finished.");
+    if args.exit {
+        println!("Close rusty fluid solver to proceed with next measurement, when a measurement is finished.");
+    }
 
     // init progress bar (for optimum performance remove bar)
     let multi_p_bar = MultiProgress::new();
@@ -131,8 +132,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
         if args.exit {
             cmd.arg("-e");
         }
-        let mut child = cmd.arg("-e")
-            .arg("-l")
+        let mut child = cmd.arg("-l")
             .arg("INFO")
             .stdout(Stdio::piped())
             .spawn()
