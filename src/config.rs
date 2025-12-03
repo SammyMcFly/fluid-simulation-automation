@@ -12,6 +12,7 @@ pub struct MeasurementConfig {
 
 #[derive(Debug, Deserialize)]
 pub struct General {
+    pub executable: String,
     pub config_file: String,
     pub state_file: String,
     pub measurement_destination_file_path: String,

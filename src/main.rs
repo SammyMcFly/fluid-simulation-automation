@@ -25,7 +25,7 @@ struct Args {
     /// Store measurements to .csv file
     // #[arg(short, long,)]
     measurement_file: String,
-    /// Exit when finished
+    /// Exit rusty_fluid_solver whenever a measurement is finished and continue with next measurement
     #[arg(short, long,)]
     exit: bool,
     /// Log severity level (Options: TRACE, DEBUG, INFO, WARN, ERROR, OFF)
@@ -89,14 +89,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
     bar.set_style(bar_style.clone());
 
     for combi in measurement_series {
-        println!("Measuring parameter combination:");
+        bar.println("Measuring parameter combination:");
         // Modify values
         for (k, v) in combi.clone() {
             if config_content.parameters.insert(k.clone(), v.clone()).is_none() {
                 panic!("Parameter in measurement.parameters does not match parameter in config file.
                 Either parameter in measurement.parameters is wrong or parameter in config file is missing.");
             }
-            println!("{}: {}", k, v)
+            bar.println(format!("{}: {}", k, v));
         }
 
         // Convert back to TOML string
@@ -114,8 +114,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
         let measurement_file_name = format!("{}.csv", measurement_file_name);
 
         // call fluid solver
-        let mut child = Command::new("../rusty_fluid_solver/target/release/rusty_fluid_solver")        // executable
-            .arg(temp_file_path.clone())
+        let mut cmd = Command::new(measurement_config.general.executable.clone());
+        cmd.arg(temp_file_path.clone())
             .arg("-s")
             .arg(measurement_config.general.state_file.clone())
             .arg("-m")
@@ -123,12 +123,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
                 &measurement_config.general.measurement_destination_file_path,
                 &measurement_file_name,
             ))
-            .arg("--start_time")
+            .arg("--start-time")
             .arg(measurement_config.general.start_time.to_string())
             .arg("-f")
             .arg(measurement_config.general.finish_time.to_string())
-            // .arg("-r")
-            // .arg("-e")
+            .arg("-r"); // start resumed
+        if args.exit {
+            cmd.arg("-e");
+        }
+        let mut child = cmd.arg("-e")
             .arg("-l")
             .arg("INFO")
             .stdout(Stdio::piped())
