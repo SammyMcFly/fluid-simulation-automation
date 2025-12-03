@@ -106,6 +106,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
         // Save back to file
         std::fs::write(temp_file_path.clone(), updated_content_hash_map)?;
 
+        let mut combi: Vec<_> = combi.iter().collect();
+        combi.sort_by_key(|(k, _)| *k);
         let measurement_file_name: String = combi
             .iter()
             .map(|(k, v)| format!("{}_{}", k, v))
