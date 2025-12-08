@@ -119,14 +119,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
         // call fluid solver
         let mut cmd = Command::new(measurement_config.general.executable.clone());
         cmd.arg(temp_file_path.clone())
-            .arg("-s")
+            .arg("--state")
             .arg(measurement_config.general.state_file.clone())
             .arg("-m")
             .arg(file_operations::add_file_name_to_folder(
                 &measurement_config.general.measurement_destination_file_path,
                 &measurement_file_name,
             ))
-            .arg("--start-time")
+            .arg("-s")
             .arg(measurement_config.general.start_time.to_string())
             .arg("-f")
             .arg(measurement_config.general.finish_time.to_string())
