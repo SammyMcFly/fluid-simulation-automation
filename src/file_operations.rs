@@ -38,9 +38,12 @@ fn add_suffix_to_file_name(original: &str, suffix: &str) -> std::path::PathBuf {
     path.with_file_name(new_filename)
 }
 
-pub fn get_temporary_config_file_path(config_file: &str) -> PathBuf {
+pub fn get_temporary_config_file_path(config_file: &str, destination_file_path: &str) -> PathBuf {
+    let config_file = std::path::Path::new(destination_file_path).join(
+            std::path::Path::new(&config_file).file_name().expect("Could not extract config_file file name.")
+        );
     let extension = "temp".to_string();
-    let temp_file_path = add_suffix_to_file_name(config_file, &extension);
+    let temp_file_path = add_suffix_to_file_name(config_file.to_str().unwrap(), &extension);
     if temp_file_path.as_path().exists() {
         panic!("Parameter variation config file already exists!");
     }

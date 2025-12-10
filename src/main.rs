@@ -61,15 +61,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
     init_logging(&args);
 
     // Parse measurement config file
-    let measurement_config = MeasurementConfig::parse_from_file(args.measurement_file)?;
+    let measurement_config = MeasurementConfig::parse_from_file(&args.measurement_file)?;
     // combine parameters
     let measurement_series = measurement_config.get_measurement_series();
 
     // Handling file paths
-    let temp_file_path = file_operations::get_temporary_config_file_path(&measurement_config.general.config_file);
+    let temp_file_path = file_operations::get_temporary_config_file_path(
+        &measurement_config.general.config_file,
+        &measurement_config.general.measurement_destination_file_path,
+    );
 
     // Read file into a string
-    let content_string = std::fs::read_to_string(measurement_config.general.config_file)?;
+    let content_string = std::fs::read_to_string(&measurement_config.general.config_file)?;
     // Parse into a TOML value
     let mut config_content: rusty_fluid_solver::Setup = toml::from_str(&content_string)?;
 
@@ -77,6 +80,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
         Ok(_) => println!("Created folder: {}", &measurement_config.general.measurement_destination_file_path),
         Err(e) => panic!("Error: {}", e),
     }
+
+    // copy measurement file and config file to destination folder
+    std::fs::copy(
+        &args.measurement_file,
+        std::path::Path::new(&measurement_config.general.measurement_destination_file_path).join(
+            std::path::Path::new(&args.measurement_file).file_name().expect("Could not extract measurement_file file name.")
+        ))?;
+    std::fs::copy(
+        &measurement_config.general.config_file,
+        std::path::Path::new(&measurement_config.general.measurement_destination_file_path).join(
+            std::path::Path::new(&measurement_config.general.config_file).file_name().expect("Could not extract measurement_file file name.")
+        ))?;
 
     if args.exit {
         println!("Close rusty fluid solver to proceed with next measurement, when a measurement is finished.");

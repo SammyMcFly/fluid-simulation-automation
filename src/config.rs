@@ -28,7 +28,7 @@ pub enum Operation {
 }
 
 impl MeasurementConfig {
-    pub fn parse_from_file(file_path: String) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn parse_from_file(file_path: &str) -> Result<Self, Box<dyn std::error::Error>> {
         // Read file into a string
         let content_string = match std::fs::read_to_string(file_path) {
             Ok(content) => content,
