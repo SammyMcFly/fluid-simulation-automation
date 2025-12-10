@@ -1,0 +1,13 @@
+[general]
+executable = "/mnt/SamsungSSD/Nextcloud/Uni_Informatik/Master_Project/fluid_simulation_workspace/target/release/rusty_fluid_solver"
+config_file = "/mnt/SamsungSSD/Nextcloud/Uni_Informatik/Master_Project/fluid_simulation_workspace/rusty_fluid_solver/task6_measurement_scene_config.toml"
+state_file = "/mnt/SamsungSSD/Nextcloud/Uni_Informatik/Master_Project/fluid_simulation_workspace/state.ron"
+measurement_destination_file_path = "/mnt/SamsungSSD/Nextcloud/Uni_Informatik/Master_Project/rusty_measure/density_error_dependence_on_relaxation_factor"
+start_time = 5.0
+finish_time = 15.0
+
+[operation]
+type = "Zip" # Zip, Cartesian
+
+[parameters]
+relaxation_factor = [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
