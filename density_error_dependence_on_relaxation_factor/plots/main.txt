@@ -1,0 +1,40 @@
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // parse args
+    let args = Args::parse();
+
+    init_logging(&args)
+
+    let out_path = std::path::Path::new(&args.out_folder);
+    folder_exists_or_create(out_path).unwrap();
+
+    // Load measurements into DataFrame
+    let cdf = CustomDataFrame::from_measurement_folder(args.in_folder)?;
+    let mut df_plotter = DFPlotter::from(cdf);
+
+    let mut default_parameters: HashMap<String, MeasurementType> = HashMap::new();
+    // default_parameters.insert(PlotParams::FluidDepth.to_key(), MeasurementType::Float(20.249999999999996));
+    default_parameters.insert(PlotParams::SolverIterations.to_key(), MeasurementType::UInt(10));
+
+    let fixed_parameters = vec![
+        // PlotParams::FluidDepth,
+        PlotParams::SolverIterations,
+    ];
+
+    let dffilter = DFFilter::new_with_fixed_parameters(default_parameters, fixed_parameters);
+
+    if let Err(e) = df_plotter.plot(
+        &[PlotParams::RelaxationFactor],
+        &[PlotParams::MeanDensityError],
+        &[PlotParams::SolverIterations],
+        None,
+    )
+    .save_to(out_path, "")
+    // .with_filter(dffilter.clone())
+    .within_x_interval(0.2..1.0)
+    .within_y_interval(-0.01..0.335)
+    .show() {
+        error!("Failed to create plot: {e}");
+    }
+
+    Ok(())
+}

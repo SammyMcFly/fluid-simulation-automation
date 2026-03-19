@@ -1,0 +1,13 @@
+[general]
+executable = "/mnt/SanDiskSSD/Nextcloud/Uni_Informatik/Master_Project/fluid_simulation_workspace/target/release/rusty_fluid_solver"
+config_file = "/mnt/SanDiskSSD/Nextcloud/Uni_Informatik/Master_Project/fluid_simulation_workspace/rusty_fluid_solver/task6_measurement_scene_config.toml"
+state_file = "/mnt/SanDiskSSD/Nextcloud/Uni_Informatik/Master_Project/fluid_simulation_workspace/state.ron"
+measurement_destination_file_path = "/mnt/SanDiskSSD/Nextcloud/Uni_Informatik/Master_Project/rusty_measure/reproducibility_of_time_to_simulate_1s_system_time2"
+start_time = 5.0
+finish_time = 6.0
+
+[operation]
+type = "Zip" # Zip, Cartesian
+
+[parameters]
+target_density_error = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]

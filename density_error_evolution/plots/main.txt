@@ -1,0 +1,54 @@
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // parse args
+    let args = Args::parse();
+
+    init_logging(&args);
+
+    let out_path = std::path::Path::new(&args.out_folder);
+    folder_exists_or_create(out_path).unwrap();
+
+    // Load measurements into DataFrame
+    let cdf = CustomDataFrame::from_measurement_folder(args.in_folder)?;
+    let mut df_plotter = DFPlotter::from(cdf);
+
+
+
+    let mut default_parameters: HashMap<String, MeasurementType> = HashMap::new();
+    default_parameters.insert(PlotParams::FluidDepth.to_key(), MeasurementType::Float(20.249999999999996));
+
+    let fixed_parameters = vec![
+        PlotParams::FluidDepth,
+    ];
+
+    let dffilter = DFFilter::new_with_fixed_parameters(default_parameters, fixed_parameters);
+
+    let groups = (
+        PlotParams::MeasurementID,
+        vec![
+            Group {
+                grouped_values: [1].iter().map(|val| { MeasurementType::UInt(*val) }).collect(),
+                group_name: "Density invariance source term".to_string(),
+            },
+            Group {
+                grouped_values: [2].iter().map(|val| { MeasurementType::UInt(*val) }).collect(),
+                group_name: "Velocity divergence source term".to_string(),
+            },
+        ],
+    );
+
+    if let Err(e) = df_plotter.plot(
+        &[PlotParams::Time],
+        &[PlotParams::DensityError],
+        &[],
+        Some(groups),
+    )
+    .save_to(out_path, "_depth_20")
+    // .with_filter(dffilter)
+    .within_x_interval(0.0..0.5)
+    .within_y_interval(0.0..1.8)
+    .show() {
+        error!("Failed to create plot: {e}");
+    }
+
+    Ok(())
+}

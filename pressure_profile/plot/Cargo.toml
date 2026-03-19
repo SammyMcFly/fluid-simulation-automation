@@ -1,0 +1,9 @@
+[package]
+name = "plot"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+polars = { version = "0.41", features = ["lazy", "csv", "regex", "dynamic_group_by"] }
+plotters = "0.3"
+glob = "0.3"
