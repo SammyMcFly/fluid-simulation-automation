@@ -1,7 +1,9 @@
 
-//! Measure with rust_fluid_solver
-//!
-//!
+/// Automation of the execution of rust_fluid_solver
+///
+/// The intended use case is to take measurements for each simulation.
+/// This allows to make a measurement series from a predefined combination
+/// of simulation parameters.
 use clap::Parser;
 use std::process::{Command, Stdio};
 use std::io::{BufRead, BufReader};
@@ -18,7 +20,8 @@ mod rusty_fluid_solver;
 mod file_operations;
 
 
-/// Simple fluid solver written in rust
+/// Program to automatically execute a series of fluid simulations
+/// for a predefined series of 'measurements'.
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Args {
