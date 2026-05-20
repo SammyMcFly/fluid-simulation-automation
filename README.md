@@ -1,6 +1,6 @@
 # Rusty Measurement Runner
 
-An automation tool for executing parametric measurement series with `rusty_fluid_solver`.
+An automation tool for executing parametric measurement series with [`rusty_fluid_solver`](https://github.com/SammyMcFly/fluid-simulation).
 
 ## Overview
 
@@ -118,6 +118,29 @@ This configuration produces 3 × 2 = **6 simulation runs**, one for each combina
 - **Progress tracking** — A progress bar (`indicatif`) shows overall completion status and estimated time remaining.
 - **Solver output** — stdout from each `rusty_fluid_solver` invocation is streamed above the progress bar.
 
+## Relationship to rusty_fluid_solver
+
+This tool is a **companion program** — it does not contain simulation logic itself. It orchestrates multiple runs of [`rusty_fluid_solver`](https://github.com/SammyMcFly/fluid-simulation) by:
+
+1. Modifying the scene config's `[parameters]` section for each combination
+2. Passing appropriate CLI flags (`-m`, `-s`, `-f`, `-r`, `-e`, `--state`)
+3. Collecting the resulting `.csv` measurement files in one location
+
+### Workflow Integration
+
+This tool is the first step in the measurement pipeline:
+
+```
+rusty_fluid_solver ──► .csv measurement files ──► rusty_plotter ──► plots (.png / .svg)
+        ▲
+        │
+rusty_measurement_runner
+```
+
+1. **`rusty_fluid_solver`** runs a simulation and exports measurements to `.csv`
+2. **`rusty_measurement_runner`** automates parameter sweeps → multiple `.csv` files
+3. **`rusty_plotter`** reads the `.csv` folder → generates comparison plots
+
 ## Dependencies
 
 | Crate | Purpose |
@@ -127,11 +150,3 @@ This configuration produces 3 × 2 = **6 simulation runs**, one for each combina
 | `tracing` / `tracing-subscriber` | Structured logging |
 | `indicatif` | Progress bar display |
 | `std::process::Command` | Subprocess management for solver invocation |
-
-## Relationship to rusty_fluid_solver
-
-This tool is a **companion program** — it does not contain simulation logic itself. It orchestrates multiple runs of `rusty_fluid_solver` by:
-
-1. Modifying the scene config's `[parameters]` section for each combination
-2. Passing appropriate CLI flags (`-m`, `-s`, `-f`, `-r`, `-e`, `--state`)
-3. Collecting the resulting `.csv` measurement files in one location
